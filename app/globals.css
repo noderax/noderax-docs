@@ -240,6 +240,10 @@ body {
   color: color-mix(in oklch, var(--color-fd-foreground) 88%, transparent);
 }
 
+#nd-page .prose > h1:first-child {
+  display: none;
+}
+
 .prose :where(p, li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   text-wrap: pretty;
 }
@@ -312,6 +316,122 @@ body {
 
   .prose {
     max-width: 52rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  #nd-docs-layout {
+    --fd-layout-width: 100%;
+    --fd-sidebar-width: 0px;
+    --fd-toc-width: 0px;
+    grid-template:
+      "header"
+      "toc-popover"
+      "main" minmax(0, 1fr) / minmax(0, 1fr) !important;
+  }
+
+  #nd-page {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 1rem;
+    padding-top: 1.1rem;
+    gap: 0.72rem;
+  }
+
+  #nd-page > h1 {
+    font-size: clamp(1.65rem, 5vw, 2rem);
+    line-height: 1.1;
+  }
+
+  #nd-page > p {
+    max-width: none;
+    font-size: 0.95rem;
+    line-height: 1.62;
+  }
+
+  .prose {
+    max-width: none;
+    font-size: 0.95rem;
+    line-height: 1.68;
+  }
+
+  .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: clamp(1.5rem, 4.7vw, 1.9rem);
+  }
+
+  .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: clamp(1.18rem, 3.7vw, 1.4rem);
+    margin-top: 1.42em;
+  }
+
+  .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: clamp(1rem, 3.1vw, 1.12rem);
+  }
+
+  .prose :where(ul, ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    padding-inline-start: 1rem;
+  }
+
+  .prose :where(pre, table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .prose [role="tablist"] {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .prose [role="tablist"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-toc-popover-trigger] {
+    padding-inline: 1rem !important;
+  }
+
+  [data-toc-popover-content] > div {
+    padding-inline: 1rem !important;
+    max-height: min(60vh, 28rem);
+  }
+}
+
+@media (max-width: 767px) {
+  #nd-page {
+    padding-inline: 0.85rem;
+    padding-top: 0.95rem;
+  }
+
+  #nd-subnav {
+    padding-inline: 0.75rem;
+  }
+
+  #nd-subnav a {
+    min-width: 0;
+  }
+
+  #nd-subnav a span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #nd-page > .not-prose {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    border-radius: 0.85rem;
+  }
+
+  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    word-break: break-word;
+  }
+
+  .fd-card,
+  .fd-card-hover {
+    border-radius: 1rem;
   }
 }
 

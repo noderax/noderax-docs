@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import type { ComponentPropsWithoutRef } from "react";
 import { notFound } from "next/navigation";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
@@ -36,8 +35,11 @@ export default async function Page({
       <DocsPage toc={page.data.toc}>
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription>{page.data.description}</DocsDescription>
-        <div className="not-prose mb-6 flex items-center gap-2">
-          <MarkdownCopyButton markdownUrl={markdownUrl} />
+        <div className="not-prose mb-6 flex flex-wrap items-center gap-2">
+          <MarkdownCopyButton
+            markdownUrl={markdownUrl}
+            className="max-sm:w-full max-sm:justify-center"
+          />
         </div>
         <DocsBody>
           <APIPage
@@ -54,7 +56,6 @@ export default async function Page({
   const pageToc = page.data.toc.filter(
     (item, index) => !(index === 0 && item.depth === 1),
   );
-  let isFirstRenderedHeading = true;
 
   return (
     <DocsPage
@@ -69,21 +70,16 @@ export default async function Page({
     >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
-      <div className="not-prose mb-6 flex items-center gap-2">
-        <MarkdownCopyButton markdownUrl={markdownUrl} />
+      <div className="not-prose mb-6 flex flex-wrap items-center gap-2">
+        <MarkdownCopyButton
+          markdownUrl={markdownUrl}
+          className="max-sm:w-full max-sm:justify-center"
+        />
       </div>
       <DocsBody>
         <MDX
           components={getMDXComponents({
             a: createRelativeLink(source, page),
-            h1: ({ children, ...props }: ComponentPropsWithoutRef<"h1">) => {
-              if (isFirstRenderedHeading) {
-                isFirstRenderedHeading = false;
-                return null;
-              }
-
-              return <h1 {...props}>{children}</h1>;
-            },
           })}
         />
       </DocsBody>

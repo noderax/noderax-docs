@@ -35,26 +35,26 @@ const pillars = [
 export default function HomePage() {
   return (
     <HomeLayout {...baseOptions()}>
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-10 sm:px-8">
-        <section className="rounded-3xl border bg-fd-card p-8 shadow-sm sm:p-10">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:gap-10 sm:px-8 sm:py-10">
+        <section className="rounded-3xl border bg-fd-card p-6 shadow-sm sm:p-10">
           <div className="inline-flex items-center rounded-full border bg-fd-background px-3 py-1 text-xs font-medium text-fd-muted-foreground">
             Installer-managed docs for operators, admins, and developers
           </div>
-          <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-fd-foreground sm:text-5xl">
+          <h1 className="mt-5 max-w-3xl text-3xl font-semibold tracking-tight text-fd-foreground sm:text-5xl">
             Run Noderax without reverse-engineering the control plane.
           </h1>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-fd-muted-foreground sm:text-lg">
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-fd-muted-foreground sm:text-lg">
             The docs cover the self-hosted install flow, the HA runtime model,
             realtime behavior, split updates center, root access profiles, and
             generated API reference from the checked-in OpenAPI snapshot.
           </p>
 
-          <div className="mt-8 rounded-2xl border bg-fd-background p-4">
+          <div className="mt-8 rounded-2xl border bg-fd-background p-3 sm:p-4">
             <div className="mb-2 text-sm font-medium text-fd-foreground">
               Fresh install
             </div>
             <div className="flex flex-col gap-3 rounded-2xl border bg-fd-card p-3 sm:flex-row sm:items-center">
-              <code className="flex-1 overflow-x-auto whitespace-nowrap text-sm text-fd-foreground">
+              <code className="flex-1 overflow-x-auto whitespace-nowrap text-xs text-fd-foreground sm:text-sm">
                 {site.installCommand}
               </code>
               <CopyCommandButton command={site.installCommand} />
@@ -82,11 +82,11 @@ export default function HomePage() {
             const Icon = pillar.icon;
 
             return (
-              <div key={pillar.title} className="rounded-2xl border bg-fd-card p-5">
+              <div key={pillar.title} className="rounded-2xl border bg-fd-card p-4 sm:p-5">
                 <div className="mb-3 inline-flex rounded-xl border bg-fd-background p-2">
                   <Icon className="size-5 text-fd-foreground" />
                 </div>
-                <h2 className="text-lg font-semibold text-fd-foreground">
+                <h2 className="text-base font-semibold text-fd-foreground sm:text-lg">
                   {pillar.title}
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">

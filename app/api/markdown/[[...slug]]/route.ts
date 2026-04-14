@@ -1,7 +1,12 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { NextResponse } from "next/server";
 import { source } from "@/lib/source";
+
+const routeFilePath = fileURLToPath(import.meta.url);
+const routeDir = path.dirname(routeFilePath);
+const docsRoot = path.resolve(routeDir, "../../../../content/docs");
 
 function stripFrontmatter(input: string): string {
   if (!input.startsWith("---\n")) {
@@ -47,7 +52,7 @@ export async function GET(
     });
   }
 
-  const absolutePath = path.join(process.cwd(), "content/docs", page.path);
+  const absolutePath = path.join(docsRoot, page.path);
   const raw = await readFile(absolutePath, "utf8");
   const markdown = stripFrontmatter(raw);
 
