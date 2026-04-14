@@ -1,0 +1,45 @@
+---
+title: Tasks, Packages, Schedules, And Notifications
+description: Coordinate operational work across nodes with tasks, package actions, schedules, and outbound notifications.
+---
+
+# Tasks, Packages, Schedules, And Notifications
+
+Noderax combines several forms of operational execution.
+
+## Tasks
+
+Tasks model command or workflow execution on nodes. The API tracks task state,
+logs, retries, stale detection, and scheduling behavior.
+
+## Packages
+
+Package workflows manage install, upgrade, search, and removal behavior through
+the control plane and the agent runtime.
+
+## Schedules
+
+Scheduled work is part of the API runtime and relies on host-side correctness in
+the control plane. In HA mode, cluster locks prevent duplicate execution.
+
+## Notifications
+
+Notifications surface the result of task and node activity to operators through
+configured delivery channels. SMTP and chat configuration are typically
+validated during setup, then tuned from the installed runtime.
+
+<Accordions type="single">
+  <Accordion title="Tasks are the durable execution model">
+    Tasks represent node-side execution that the control plane wants to persist,
+    observe, retry, diagnose, and audit. They are more than a transient command
+    dispatch.
+  </Accordion>
+  <Accordion title="Packages are task-backed workflows">
+    Package operations are presented as a higher-level operator surface, but the
+    real execution still resolves into tracked work claimed by the agent.
+  </Accordion>
+  <Accordion title="Notifications are downstream signals">
+    Email and chat delivery are for operator awareness. The canonical execution
+    history remains in tasks, events, diagnostics, and audit-backed state.
+  </Accordion>
+</Accordions>

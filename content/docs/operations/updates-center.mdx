@@ -1,0 +1,87 @@
+---
+title: Updates Center
+description: Understand the split Updates Center with separate control-plane and agent update surfaces, plus the freeze modal shown during control-plane apply.
+---
+
+# Updates Center
+
+The Updates Center is intentionally split into two different operational
+surfaces.
+
+<Tabs items={["Control plane", "Agent updates"]}>
+  <Tab value="Control plane">
+    Use this tab when the installer-managed control plane itself has a newer
+    `releaseId`. The flow is `download -> prepared -> apply`.
+  </Tab>
+  <Tab value="Agent updates">
+    Use this tab for rollout-based agent release management across enrolled
+    nodes. This flow is independent from control-plane release identity.
+  </Tab>
+</Tabs>
+
+## Control plane tab
+
+The control-plane tab shows:
+
+- current installed release
+- latest published release
+- prepared release, if one has been downloaded
+- live operation state when download or apply is active
+
+<Steps>
+  <Step>
+    A platform admin opens the `Control plane` tab and sees whether a newer
+    immutable `releaseId` exists.
+  </Step>
+  <Step>
+    The admin downloads the latest release into the prepared state without
+    recreating running services.
+  </Step>
+  <Step>
+    The admin explicitly applies the prepared release.
+  </Step>
+  <Step>
+    The host-side supervisor recreates services and verifies runtime health
+    before clearing the operation state.
+  </Step>
+</Steps>
+
+## Freeze modal during apply
+
+When the control plane is actively recreating services:
+
+- the authenticated UI is frozen behind a full-screen modal
+- an estimated countdown is shown
+- refresh controls remain visible
+- the design assumes that services may temporarily restart or become unavailable
+
+This is deliberate. The UI should not invite normal interaction while the
+control plane itself is being replaced.
+
+<Callout type="warning">
+  The freeze modal is a deliberate operator safety boundary. During service
+  recreation the UI may stay reachable while the underlying API and web
+  containers are being replaced, so normal interaction is intentionally blocked.
+</Callout>
+
+## Agent updates tab
+
+The agent updates tab is about rollout state, target nodes, progress, and
+possible rollback activity. It does not mutate the control-plane bundle.
+
+## Operator cues in the UI
+
+<Cards>
+  <Card
+    title="Control-plane release available"
+    description="Shown when a newer `releaseId` exists but nothing is downloaded yet."
+  />
+  <Card
+    title="Prepared release ready"
+    description="Shown after the latest bundle is downloaded and can be explicitly applied."
+  />
+  <Card
+    title="Agent rollout active"
+    description="Shown independently of control-plane state when a node-agent rollout or rollback is in progress."
+  />
+</Cards>

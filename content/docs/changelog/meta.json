@@ -1,0 +1,11 @@
+{
+  "title": "Changelog",
+  "description": "Track the current control-plane line, release identity, and curated notes for platform and agent changes.",
+  "icon": "History",
+  "pages": [
+    "current-line",
+    "control-plane-release-identity",
+    "recent-platform-changes",
+    "agent-line-and-rollouts"
+  ]
+}

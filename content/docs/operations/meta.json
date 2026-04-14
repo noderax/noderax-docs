@@ -1,0 +1,14 @@
+{
+  "title": "Operations",
+  "description": "Operate workspaces, users, nodes, metrics, packages, tasks, terminals, and both update surfaces.",
+  "icon": "LayoutDashboard",
+  "pages": [
+    "workspaces-and-access",
+    "add-node-and-bootstrap",
+    "metrics-events-diagnostics",
+    "tasks-packages-notifications",
+    "root-access",
+    "terminals",
+    "updates-center"
+  ]
+}

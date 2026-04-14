@@ -1,0 +1,6 @@
+{
+  "title": "Start Here",
+  "description": "What Noderax is, who it is for, and how to orient around the current product surface.",
+  "icon": "Rocket",
+  "pages": ["overview", "quickstart-paths", "glossary"]
+}

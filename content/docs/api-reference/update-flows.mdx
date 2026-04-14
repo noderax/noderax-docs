@@ -1,0 +1,61 @@
+---
+title: Agent And Control-Plane Update Flows
+description: Distinguish the rollout-based agent update APIs from installer-managed control-plane update APIs.
+---
+
+# Agent And Control-Plane Update Flows
+
+Noderax has two update domains.
+
+## Agent updates
+
+Agent updates are rollout-driven. They target enrolled nodes and report rollout
+progress back into the control plane.
+
+## Control-plane updates
+
+Control-plane updates are installer-managed and host-executed. The API only:
+
+- summarizes update availability
+- queues download/apply requests
+- exposes state back to the web UI
+
+The actual deployment mutation happens on the host-side supervisor.
+
+<Tabs items={["Agent rollouts", "Control-plane self-update"]}>
+  <Tab value="Agent rollouts">
+    Agent updates are fleet operations. They target many nodes, move progressively,
+    and remain scoped to enrolled agent runtimes.
+  </Tab>
+  <Tab value="Control-plane self-update">
+    Control-plane updates are host-local bundle operations. They prepare and apply a
+    new installer-managed platform bundle for the control plane itself.
+  </Tab>
+</Tabs>
+
+## Decision boundary
+
+<Accordions type="single">
+  <Accordion title="Use agent updates when the node runtime changes">
+    Agent updates exist for changing the software installed on managed nodes. They
+    do not replace the control plane, nginx, PostgreSQL, or Redis.
+  </Accordion>
+  <Accordion title="Use control-plane updates when the platform bundle changes">
+    Control-plane updates exist for replacing the self-hosted platform bundle under
+    `/opt/noderax-platform/releases/<releaseId>` and promoting that bundle into the
+    active runtime.
+  </Accordion>
+</Accordions>
+
+## API design consequences
+
+<Cards>
+  <Card
+    title="Agent update APIs"
+    description="Expose release discovery, rollout creation, rollout monitoring, and rollback-oriented fleet operations."
+  />
+  <Card
+    title="Control-plane update APIs"
+    description="Expose summary/download/apply only. The API is intentionally not the component that mutates the Docker runtime."
+  />
+</Cards>

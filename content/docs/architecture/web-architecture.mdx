@@ -1,0 +1,63 @@
+---
+title: Web Architecture
+description: Understand how the Next.js dashboard proxies API traffic, consumes realtime data, and renders separate operational surfaces.
+---
+
+# Web Architecture
+
+The web app is the authenticated operator surface.
+
+## Responsibilities
+
+- authentication flows
+- workspace-aware dashboards and detail pages
+- add-node and install-command surfaces
+- metrics, diagnostics, packages, and terminals
+- split Updates Center
+- control-plane apply freeze modal
+
+<Files>
+  <Folder name="app/" defaultOpen>
+    <File name="App Router routes and proxy handlers" />
+  </Folder>
+  <Folder name="components/" defaultOpen>
+    <File name="feature UIs for nodes, metrics, diagnostics, terminals, updates, login, and setup" />
+  </Folder>
+  <Folder name="lib/" defaultOpen>
+    <File name="API client, auth helpers, realtime hooks, data hooks, mapping utilities" />
+  </Folder>
+  <Folder name="store/" defaultOpen>
+    <File name="Zustand app state and client-side snapshots" />
+  </Folder>
+</Files>
+
+## API access model
+
+The web app uses internal proxy routes for many server-side requests, but those
+proxies must preserve externally reachable API URLs where commands are shown back
+to the user. Internal upstreams such as `http://nginx` are valid runtime wiring,
+not valid public API URLs for display.
+
+## Realtime consumption
+
+Recent fixes ensured the web layer consumes live metric and node-install events
+instead of only relying on periodic polling.
+
+## UI-level architectural patterns
+
+<Accordions type="single">
+  <Accordion title="Proxy-first data access">
+    The web app often talks to Next.js route handlers first, which then forward to the
+    API. This keeps browser auth/session handling centralized and allows the server
+    layer to normalize API behavior.
+  </Accordion>
+  <Accordion title="React Query for server state">
+    The dashboard renders from query-backed state, then patches live updates into that
+    state through websocket consumers instead of forcing expensive refetch loops for
+    every small update.
+  </Accordion>
+  <Accordion title="Freeze modal for control-plane apply">
+    During blocking control-plane updates the app intentionally locks the entire
+    authenticated shell so operators do not interact with a partially restarted UI.
+  </Accordion>
+</Accordions>

@@ -1,0 +1,92 @@
+---
+title: What Is Noderax
+description: Understand the current Noderax product surface, its deployment model, and how the main repos map to user-facing capabilities.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+import { Files, Folder, File } from "fumadocs-ui/components/files";
+
+# What Is Noderax
+
+Noderax is an infrastructure operations platform built around a single control
+plane and a node-level agent runtime.
+
+The shipped system combines:
+
+- a **web control plane** for platform admins and operators
+- a **NestJS API** that owns orchestration, persistence, auth, realtime, and updates
+- a **Go agent** installed on nodes to stream metrics, run tasks, open terminals, and report progress
+- an **installer-managed platform bundle** that packages web, API, nginx, PostgreSQL, Redis, and runtime helpers into a self-hosted deployment
+
+## Product surfaces
+
+### Control plane
+
+The control plane is what users log into. It includes:
+
+- workspaces, teams, memberships, and roles
+- node enrollment and bootstrap flows
+- metrics, events, diagnostics, packages, scheduled work, and notifications
+- terminal sessions and transcript handling
+- agent update rollouts
+- installer-managed control-plane updates
+
+### Agent runtime
+
+The agent is installed on each managed node. It:
+
+- authenticates against the control plane
+- streams metrics and heartbeat state
+- accepts tasks and package actions
+- opens reverse terminal sessions
+- reports node install/bootstrap progress
+
+### Installer-managed self-hosting
+
+The platform bundle is not a thin compose example. It is an opinionated runtime
+packaging layer that:
+
+- provisions the first-run setup stack
+- promotes into the HA runtime after `/setup`
+- manages bundled nginx and certificate renewal
+- exposes control-plane self-update actions from the dashboard
+
+<Callout type="info">
+  The self-hosted product has two distinct phases: the setup phase with
+  `api-setup`, then the installed HA runtime with `api-a`, `api-b`, `web`, and
+  `nginx`.
+</Callout>
+
+## Repository map
+
+<Files>
+  <Folder name="noderax-api" defaultOpen>
+    <File name="NestJS control plane API" />
+  </Folder>
+  <Folder name="noderax-web" defaultOpen>
+    <File name="Next.js operator dashboard" />
+  </Folder>
+  <Folder name="noderax-agent" defaultOpen>
+    <File name="Go node agent runtime" />
+  </Folder>
+  <Folder name="noderax-platform-release" defaultOpen>
+    <File name="bundle build, installer, compose, nginx, publish scripts" />
+  </Folder>
+  <Folder name="noderax-saas" defaultOpen>
+    <File name="public marketing site" />
+  </Folder>
+  <Folder name="noderax-docs" defaultOpen>
+    <File name="this docs site" />
+  </Folder>
+</Files>
+
+## Deployment model
+
+Noderax currently documents and optimizes for:
+
+- **installer-managed self-hosting**
+- **English-only public docs**
+- **current-line docs plus changelog**
+- **release identity driven by `releaseId`**
+
+The installer-managed path is the one most operational documentation assumes.

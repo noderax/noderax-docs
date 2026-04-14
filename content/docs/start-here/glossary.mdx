@@ -1,0 +1,65 @@
+---
+title: Glossary
+description: Reference the main product nouns used throughout the Noderax control plane, agent runtime, and installer-managed deployment docs.
+---
+
+# Glossary
+
+## Control plane
+
+The full Noderax web and API surface that operators and admins use. In the
+self-hosted bundle this means the packaged `web`, `api-*`, nginx, and related
+host-side runtime helpers.
+
+## Workspace
+
+The main isolation boundary for operational data. Nodes, metrics, terminals,
+notifications, and most day-to-day actions are scoped to a workspace.
+
+## Node
+
+A managed machine enrolled into the control plane. A node becomes active after
+the agent installs, authenticates, and reports bootstrap status.
+
+## Agent
+
+The Go runtime installed on each managed node. It sends heartbeat and metrics,
+accepts tasks, handles package work, and supports terminal sessions.
+
+## Rollout
+
+An orchestrated agent update action that targets a set of nodes. Rollouts are
+tracked separately from installer-managed control-plane updates.
+
+## Root access
+
+The policy layer that controls when privileged actions are permitted on nodes.
+Noderax supports direct flags plus higher-level composite profiles that package
+root access expectations into reusable operational choices.
+
+## Setup runtime
+
+The pre-install bundle state in which `api-setup` is active and the web app
+serves `/setup`. This phase exists only until bootstrap completes.
+
+## Runtime promotion
+
+The host-side transition from the setup stack to the installed HA runtime. A
+successful promotion replaces `api-setup` with `api-a` and `api-b`.
+
+## releaseId
+
+The immutable identity for a control-plane build inside the `1.0.0` product
+line. Control-plane update detection compares `releaseId`, not just
+`platformVersion`.
+
+## Prepared release
+
+A downloaded but not yet applied installer-managed control-plane bundle. Prepared
+state allows operators to stage the next release before explicitly applying it.
+
+## Freeze modal
+
+The full-screen authenticated UI lock shown during blocking control-plane apply
+stages. It exists to prevent interaction with the dashboard while the control
+plane services are being recreated.

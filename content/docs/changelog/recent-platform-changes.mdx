@@ -1,0 +1,34 @@
+---
+title: Recent Platform Changes
+description: Summarize the major recent changes that affected installer-managed deployments, runtime promotion, updates, and realtime behavior.
+---
+
+# Recent Platform Changes
+
+Recent platform work hardened several sensitive areas:
+
+- installer-first setup and guided runtime promotion
+- domain-aware TLS and cert issuance validation
+- control-plane self-update with prepared/apply semantics
+- split Updates Center for control plane versus agent updates
+- full-screen freeze modal during control-plane apply
+- corrected runtime health and route probing
+- HA-safe realtime fanout for node install progress and live metrics
+
+These changes are already reflected throughout the docs tree. This page exists
+to provide a high-level release narrative for the current control-plane line.
+
+<Tabs items={["Operators", "Platform admins", "Developers"]}>
+  <Tab value="Operators">
+    Focus on node install progress, live metrics freshness, and the new Updates
+    Center separation between control-plane state and agent rollout state.
+  </Tab>
+  <Tab value="Platform admins">
+    Focus on installer-managed self-update, `releaseId`, runtime promotion, route
+    probes, and host-side supervisor orchestration.
+  </Tab>
+  <Tab value="Developers">
+    Focus on the cross-repo contract changes: OpenAPI export, docs sync, release
+    manifests, runtime health semantics, and HA-safe realtime fanout.
+  </Tab>
+</Tabs>

@@ -1,0 +1,82 @@
+---
+title: Realtime Model
+description: Understand the websocket transport, workspace fanout, HA bridge behavior, and why some routes are HTTP while others are event-driven.
+---
+
+# Realtime Model
+
+Noderax uses websocket-backed realtime transport for live updates such as:
+
+- node install progress
+- metrics ingestion updates
+- node status transitions
+- terminal streaming
+
+<Tabs items={["Transport", "Namespaces", "Delivery guarantees in HA"]}>
+  <Tab value="Transport">
+    Realtime transport is websocket-backed through Socket.IO. The transport path and
+    the logical namespace are different layers.
+  </Tab>
+  <Tab value="Namespaces">
+    Noderax separates realtime concerns into namespaces such as general realtime,
+    terminal transport, and agent-specific realtime coordination.
+  </Tab>
+  <Tab value="Delivery guarantees in HA">
+    In installed HA mode, correctness depends on room membership, immediate event
+    emission, and Redis-based cross-instance propagation.
+  </Tab>
+</Tabs>
+
+## Important transport notes
+
+- realtime is not a simple `GET /realtime` HTTP route
+- websocket transport rides on the Socket.IO transport path
+- namespace-level semantics sit above the base transport
+
+## What belongs on realtime versus HTTP
+
+<Accordions type="single">
+  <Accordion title="Use HTTP for state reads and mutations">
+    Canonical reads, writes, installs, configuration changes, and durable operations
+    remain HTTP-first. Realtime should not be treated as the authoritative source of
+    truth for durable state.
+  </Accordion>
+  <Accordion title="Use realtime for operator freshness">
+    Realtime exists to keep operator surfaces feeling current: install progress,
+    metrics updates, node status changes, root-access transitions, and terminal IO.
+  </Accordion>
+  <Accordion title="Do not interpret a plain GET as the realtime contract">
+    A successful HTTP response at a similarly named route does not prove anything
+    about websocket delivery. The transport path, namespace, room join, and event
+    fanout are separate concerns.
+  </Accordion>
+</Accordions>
+
+## HA behavior
+
+In the installed runtime, websocket connections may land on either `api-a` or
+`api-b`. That means realtime only feels correct if:
+
+- events are published immediately
+- workspace-scoped rooms are joined correctly
+- cross-instance Redis bridge fanout forwards events between API instances
+
+That HA model is documented here because it affects both debugging and API
+integration expectations.
+
+## Operator-visible consequences
+
+<Cards>
+  <Card
+    title="Node install progress"
+    description="Bootstrap progress only feels correct when workspace fanout, Redis bridging, and immediate event emission all work together."
+  />
+  <Card
+    title="Live metrics"
+    description="The web UI depends on realtime events being merged into the active metrics query cache, not only on periodic polling."
+  />
+  <Card
+    title="Terminal sessions"
+    description="Terminal transport adds a more sensitive websocket path on top of auth, workspace access, agent connectivity, and root-access policy."
+  />
+</Cards>

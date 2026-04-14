@@ -1,0 +1,61 @@
+---
+title: Local Runtime Model
+description: Understand the two runtime phases, the role of the supervisor, and how installer-managed self-update interacts with the host file system.
+---
+
+# Local Runtime Model
+
+The installer-managed control plane is a host-aware deployment, not only a set
+of containers.
+
+## Key directories
+
+- `/opt/noderax-platform/current`: active bundle symlink
+- `/opt/noderax-platform/releases/<releaseId>`: extracted bundle releases
+- `/etc/noderax-platform/.env.production`: runtime configuration
+- `/var/lib/noderax-platform`: state root for PostgreSQL, Redis, ACME, and host-side state files
+
+## Supervisor responsibilities
+
+The host-side supervisor is responsible for:
+
+- monitoring runtime promotion
+- processing control-plane update download/apply requests
+- keeping the active bundle and current symlink coherent
+- driving safe rolling recreation of installed runtime services
+
+## Setup versus installed runtime
+
+### Setup runtime
+
+- single API role: `api-setup`
+- web serves `/setup`
+- used only until the product is configured
+
+### Installed runtime
+
+- dual API roles: `api-a`, `api-b`
+- web serves the authenticated dashboard
+- health model includes API route, web upstream, and web route probes
+
+<Tabs items={["Setup phase", "Installed phase", "Host-managed state"]}>
+  <Tab value="Setup phase">
+    Setup mode is intentionally narrow: `api-setup` exists to finish bootstrap and
+    prepare promotion. Database-backed installed-runtime checks are not the contract
+    here.
+  </Tab>
+  <Tab value="Installed phase">
+    Installed mode introduces HA API topology, steady web routing, active Redis
+    pubsub, runtime workers, and the full operator surface.
+  </Tab>
+  <Tab value="Host-managed state">
+    Even after promotion, the host still owns bundle selection, cert renewal,
+    update requests, and runtime orchestration through the supervisor.
+  </Tab>
+</Tabs>
+
+## Release identity
+
+The control plane still lives on the `1.0.0` line, but every published control
+plane build carries a distinct `releaseId`. Update detection and apply logic use
+`releaseId`, not just `platformVersion`.

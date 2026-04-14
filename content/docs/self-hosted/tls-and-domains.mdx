@@ -1,0 +1,58 @@
+---
+title: TLS And Domain Setup
+description: Use a public origin correctly, understand the ACME flow, and know how bundled nginx and certbot behave in installer-managed deployments.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+# TLS And Domain Setup
+
+If you provide a domain-backed public origin, the installer can provision
+automatic HTTPS with Let's Encrypt on the bundled nginx.
+
+## Recommended input
+
+- preferred: `https://dash.example.com`
+- acceptable for local testing: `http://203.0.113.10`
+
+When you use a domain origin, the installer will ask whether it should issue a
+certificate and will request an ACME contact email.
+
+## Operational notes
+
+- the bundled nginx is the ACME HTTP challenge endpoint
+- ACME verification depends on the public domain resolving to the host
+- first issuance is easiest when Cloudflare is in DNS-only mode instead of proxied mode
+
+## TLS lifecycle
+
+<Steps>
+  <Step>
+    The installer validates that the bundled nginx can answer local HTTP probes and
+    ACME challenge routing on port `80`.
+  </Step>
+  <Step>
+    certbot requests the certificate for the configured public host.
+  </Step>
+  <Step>
+    The installer verifies that the issued certificate files exist and are valid
+    before switching the runtime into HTTPS mode.
+  </Step>
+  <Step>
+    The renewal timer is installed so later renewals remain host-managed.
+  </Step>
+</Steps>
+
+## Renewal
+
+Successful HTTPS installs enable:
+
+- `noderax-platform-cert-renew.timer`
+
+That timer is responsible for scheduled renewal using the bundled certbot flow.
+
+<Callout type="info">
+  Recent installer changes hardened certificate issuance validation. The
+  installer now verifies the resulting certificate files before declaring HTTPS
+  active.
+</Callout>

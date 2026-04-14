@@ -1,0 +1,65 @@
+---
+title: Agent Line And Rollouts
+description: Track the separate operational model for agent releases and understand how it differs from control-plane self-update.
+---
+
+# Agent Line And Rollouts
+
+Agent releases remain a separate concern from control-plane releases.
+
+## Agent release behavior
+
+- agents are updated through rollout APIs and UI surfaces
+- rollouts target enrolled nodes
+- progress is observable from the dashboard and API
+- rollback behavior is independent from host-side control-plane rollback
+
+<Tabs items={["What changes", "What does not change"]}>
+  <Tab value="What changes">
+    A rollout changes the node-side runtime. That means telemetry shipping, task
+    execution, package operations, terminal transport, and agent-side bug fixes all
+    move with the rollout.
+  </Tab>
+  <Tab value="What does not change">
+    A rollout does not replace the control plane, the installer-managed bundle,
+    nginx, PostgreSQL, Redis, or the host-side runtime supervisor.
+  </Tab>
+</Tabs>
+
+## Why the split matters
+
+Treating agent updates and control-plane updates as one surface would hide real
+operational differences. Noderax keeps them separate because:
+
+- agent updates change node runtimes
+- control-plane updates change the platform itself
+- each one has different safety constraints, scopes, and recovery paths
+
+<Accordions type="single">
+  <Accordion title="Rollout scope">
+    Agent rollouts target selected enrolled nodes. That target set can be partial, and
+    rollout progress is meaningful even when the control plane stays unchanged.
+  </Accordion>
+  <Accordion title="Failure recovery">
+    A failed rollout can often be isolated to a subset of nodes and addressed with a
+    rollback or targeted remediation. That is very different from recovering a failed
+    control-plane apply.
+  </Accordion>
+  <Accordion title="Operator mental model">
+    Keeping the surfaces separate helps operators understand whether they are changing
+    the managed fleet or the platform that orchestrates the fleet.
+  </Accordion>
+</Accordions>
+
+<Cards>
+  <Card
+    title="Updates Center"
+    href="/docs/operations/updates-center"
+    description="See how the `Agent updates` tab presents rollout state separately from control-plane state."
+  />
+  <Card
+    title="Control-plane updates"
+    href="/docs/self-hosted/control-plane-updates"
+    description="Compare rollout behavior with installer-managed bundle download/apply semantics."
+  />
+</Cards>

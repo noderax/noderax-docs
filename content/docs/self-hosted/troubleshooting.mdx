@@ -1,0 +1,75 @@
+---
+title: Troubleshooting Install And Runtime Failures
+description: Use the shipped status helper and the most common failure patterns to diagnose installer-managed control-plane issues.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+# Troubleshooting Install And Runtime Failures
+
+The first diagnostic entry point is:
+
+```bash
+sudo /opt/noderax-platform/current/deploy/platform/status.sh
+```
+
+## First checks
+
+<CodeBlock>
+```bash
+sudo /opt/noderax-platform/current/deploy/platform/status.sh
+sudo docker ps
+sudo journalctl -u noderax-platform-supervisor -n 200 --no-pager
+```
+</CodeBlock>
+
+## What the status helper tells you
+
+It prints:
+
+- control-plane version, releaseId, and released timestamp
+- current setup and runtime compose service states
+- route probe results for API and web routing
+- the current dependency health payload
+- prepared or active control-plane update state when relevant
+
+## Common failure patterns
+
+### Setup stack is healthy but the runtime is not promoted yet
+
+Expected symptoms:
+
+- `api-setup` exists
+- no `api-a` or `api-b`
+- `/setup` works
+
+This means the control plane is still in setup mode. Finish `/setup` first.
+
+### ACME preflight or issuance fails
+
+Check:
+
+- public DNS resolution
+- Cloudflare proxy mode
+- port `80` reachability
+- certbot logs
+
+### Web route probe fails while web container is healthy
+
+This points to routing or promotion issues, not just container startup. The web
+service must serve the correct surface for the current phase:
+
+- `/setup` during setup
+- `/login` after promotion
+
+### Realtime feels silent
+
+Check the runtime after login, not the setup stack. Realtime and live metric
+streaming depend on the installed runtime and active workspace-scoped event
+delivery.
+
+<Callout type="warning">
+  Browser extension noise in the console can look like a Noderax realtime issue.
+  Validate the actual websocket and API requests before treating console
+  extension errors as product failures.
+</Callout>

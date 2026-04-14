@@ -1,0 +1,75 @@
+---
+title: Installer-Managed Control-Plane Updates
+description: Understand how control-plane update detection, download, prepared state, apply, and rollback work in installer-managed deployments.
+---
+
+import { Steps, Step } from "fumadocs-ui/components/steps";
+
+# Installer-Managed Control-Plane Updates
+
+Installer-managed control-plane updates are separate from agent updates.
+
+## Current model
+
+- **latest-only**
+- **two-step**
+- **installer-managed deployments only**
+
+The flow is:
+
+<Steps>
+  <Step>
+    The API compares the current installed `releaseId` to the latest published
+    `releaseId`.
+  </Step>
+  <Step>
+    A platform admin requests **Download latest update**.
+  </Step>
+  <Step>
+    The host-side supervisor fetches, verifies, extracts, and prepares the new
+    bundle under `/opt/noderax-platform/releases/<releaseId>`.
+  </Step>
+  <Step>
+    The prepared state becomes visible in the `Control plane` tab of the Updates
+    Center.
+  </Step>
+  <Step>
+    A platform admin explicitly confirms **Apply prepared update**.
+  </Step>
+  <Step>
+    The host-side supervisor recreates runtime services in a controlled order and
+    verifies the new runtime before declaring success.
+  </Step>
+</Steps>
+
+## Apply-time UI behavior
+
+While the control plane is actively applying:
+
+- the authenticated web UI shows a full-screen freeze modal
+- user interaction is intentionally blocked
+- the modal shows live stage text, an approximate countdown, and refresh actions
+
+This is not decorative. It exists because the web and API services may restart
+in place during the apply window.
+
+## Failure handling
+
+If an apply fails, the host-side update flow attempts to:
+
+- restore the previous bundle symlink
+- reload the previous tagged images
+- recreate the prior runtime
+- surface the failure state back to the dashboard
+
+## Host state involved
+
+<Files>
+  <Folder name="/var/lib/noderax-platform/state" defaultOpen>
+    <File name="platform-update-request.json" />
+    <File name="platform-update-state.json" />
+  </Folder>
+  <Folder name="/opt/noderax-platform/releases" defaultOpen>
+    <File name="<releaseId>/ prepared bundle extraction roots" />
+  </Folder>
+</Files>

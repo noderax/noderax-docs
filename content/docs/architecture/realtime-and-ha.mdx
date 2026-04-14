@@ -1,0 +1,84 @@
+---
+title: Realtime And HA Data Flow
+description: Trace the HA runtime path for websocket transport, workspace fanout, Redis pubsub bridging, and immediate event emission.
+---
+
+# Realtime And HA Data Flow
+
+Realtime correctness in Noderax depends on more than a working websocket
+handshake.
+
+## Installed runtime topology
+
+In the HA runtime, websocket sessions may connect to either `api-a` or `api-b`.
+
+<Files>
+  <Folder name="Runtime edge" defaultOpen>
+    <File name="nginx -> websocket proxy and route selection" />
+  </Folder>
+  <Folder name="API cluster" defaultOpen>
+    <File name="api-a" />
+    <File name="api-b" />
+    <File name="Redis pubsub bridge" />
+  </Folder>
+  <Folder name="Web operator surface" defaultOpen>
+    <File name="metrics cache patching" />
+    <File name="workspace-scoped event consumers" />
+  </Folder>
+</Files>
+
+## Required delivery properties
+
+For live UX to work:
+
+- the connected socket must join the correct workspace-scoped rooms
+- emitted events must target those rooms, not only node-level rooms
+- cross-instance Redis bridging must forward events between API instances
+- events that drive operator perception must emit immediately instead of sitting
+  behind a slow generic outbox path
+
+## End-to-end delivery path
+
+<Steps>
+  <Step>
+    The operator’s browser authenticates and opens the Socket.IO transport
+    through nginx.
+  </Step>
+  <Step>
+    The socket terminates on one API instance and joins workspace-scoped rooms.
+  </Step>
+  <Step>
+    Agents emit metrics, install progress, task changes, or node status into the
+    control plane.
+  </Step>
+  <Step>
+    The emitting API instance sends the event immediately and republishes it over
+    Redis so the other API instance can deliver it too.
+  </Step>
+  <Step>
+    The web client receives the event and patches the relevant query cache or
+    reactive UI state.
+  </Step>
+</Steps>
+
+## Practical consequence
+
+If node install progress or live metrics appear frozen in HA mode, the root
+cause is usually one of these architectural legs, not the dashboard widget
+itself.
+
+<Accordions type="single">
+  <Accordion title="Symptom: websocket connects but the UI stays stale">
+    This usually means the transport exists but one of the middle legs is broken:
+    wrong room membership, missing cross-instance bridge, or the web client is
+    not merging the event into the active query cache.
+  </Accordion>
+  <Accordion title="Symptom: progress works on one instance but not in HA">
+    Single-instance local development can mask missing pubsub fanout. HA mode
+    exposes whether emitted events are truly cross-instance safe.
+  </Accordion>
+  <Accordion title="Symptom: live metrics endpoint works but tiles do not move">
+    HTTP fetch success only proves the read path. The operator experience still
+    depends on websocket delivery plus client-side cache patching.
+  </Accordion>
+</Accordions>

@@ -1,0 +1,63 @@
+---
+title: Agent Architecture
+description: Understand the Go agent runtime, its connection to the control plane, and how it participates in node install, metrics, tasks, and terminals.
+---
+
+# Agent Architecture
+
+The agent is the runtime that lives on each managed node.
+
+## Core duties
+
+- register and authenticate with the control plane
+- emit heartbeat and metrics
+- accept tasks and package operations
+- proxy terminal IO
+- report node install progress and final enrollment state
+
+<Files>
+  <Folder name="cmd/agent" defaultOpen>
+    <File name="binary entrypoint" />
+  </Folder>
+  <Folder name="internal/agent" defaultOpen>
+    <File name="service composition and enrollment/bootstrap flow" />
+  </Folder>
+  <Folder name="internal/realtime" defaultOpen>
+    <File name="control-plane transport client" />
+  </Folder>
+  <Folder name="internal/terminal" defaultOpen>
+    <File name="terminal reverse-session handling" />
+  </Folder>
+</Files>
+
+## Runtime composition
+
+<Accordions type="single">
+  <Accordion title="Identity and enrollment">
+    The agent persists node identity, authenticates against the control plane, and
+    transitions from bootstrap install into steady enrolled operation.
+  </Accordion>
+  <Accordion title="Metrics and heartbeat">
+    The metrics service samples host state and ships it back to the control plane so
+    the operator UI can render telemetry cards, charts, and freshness indicators.
+  </Accordion>
+  <Accordion title="Task execution">
+    The task runtime claims work from the control plane, executes it locally, and
+    reports status, logs, and completion back through the API.
+  </Accordion>
+  <Accordion title="Terminal bridge">
+    The terminal path is reverse-tunneled. The control plane authorizes the session,
+    while the agent owns the local PTY side on the node.
+  </Accordion>
+</Accordions>
+
+## Release model
+
+The agent has its own release line and rollout system. It is updated through the
+agent updates surface, not through control-plane self-update.
+
+<Callout type="info">
+  The agent is part of the product runtime but not part of the installer-managed
+  control-plane bundle lifecycle. Its operational update surface remains rollout
+  based.
+</Callout>

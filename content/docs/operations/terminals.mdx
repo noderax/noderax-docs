@@ -1,0 +1,55 @@
+---
+title: Terminal Sessions And Transcript Behavior
+description: Open browser terminals safely, understand reverse session flow through the agent, and know what transcript retention means operationally.
+---
+
+# Terminal Sessions And Transcript Behavior
+
+Terminal access is reverse-tunneled through the agent and coordinated by the API
+and web control plane.
+
+## Session flow
+
+The user requests a terminal from the web UI, the API authorizes it, and the
+agent establishes the remote side of the session.
+
+<Steps>
+  <Step>
+    The operator requests a terminal-capable session from the dashboard.
+  </Step>
+  <Step>
+    The API authorizes the request against workspace access plus the current
+    root-access policy for that node.
+  </Step>
+  <Step>
+    The agent binds the local PTY and the terminal websocket carries live IO.
+  </Step>
+  <Step>
+    Transcript chunks and session metadata are persisted for later review and
+    lifecycle management.
+  </Step>
+</Steps>
+
+## Transcript model
+
+Transcript chunks and session metadata are stored and queried separately. This
+allows:
+
+- live session streaming
+- later transcript review
+- retention or cleanup handling without breaking active sessions
+
+## Operational implications
+
+Terminal access is not just a websocket feature. It depends on:
+
+- workspace scoping
+- root-access policy
+- agent connectivity
+- realtime message delivery
+
+<Callout type="warning">
+  Terminal failures are rarely “just websocket failures.” They are usually the
+  product of auth, workspace access, node state, root-access policy, and transport
+  health together.
+</Callout>

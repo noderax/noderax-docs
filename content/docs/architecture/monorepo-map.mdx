@@ -1,0 +1,55 @@
+---
+title: Repository Map
+description: Learn how the Noderax repos are split and what each one owns in the shipped product.
+---
+
+# Repository Map
+
+The working tree is made of coordinated repos, not a single package workspace.
+
+## Main repos
+
+- `noderax-api`: NestJS control-plane API
+- `noderax-web`: Next.js authenticated dashboard
+- `noderax-agent`: Go runtime for managed nodes
+- `noderax-platform-release`: bundle builder, installer, compose definitions, nginx configs, release metadata, and publish scripts
+- `noderax-saas`: public marketing site
+- `noderax-docs`: public documentation site
+
+<Files>
+  <Folder name="noderax-api" defaultOpen>
+    <File name="control-plane API, auth, orchestration, realtime, diagnostics, updates" />
+  </Folder>
+  <Folder name="noderax-web" defaultOpen>
+    <File name="operator dashboard and authenticated UI surface" />
+  </Folder>
+  <Folder name="noderax-agent" defaultOpen>
+    <File name="node-side runtime for telemetry, tasks, and terminals" />
+  </Folder>
+  <Folder name="noderax-platform-release" defaultOpen>
+    <File name="bundle builder, installer, compose, nginx, publish flow" />
+  </Folder>
+  <Folder name="noderax-saas" defaultOpen>
+    <File name="marketing site" />
+  </Folder>
+  <Folder name="noderax-docs" defaultOpen>
+    <File name="public Fumadocs site and checked-in OpenAPI snapshot" />
+  </Folder>
+</Files>
+
+## Why the split matters
+
+The separation is operationally meaningful:
+
+- the API and web ship together in the control-plane bundle
+- the agent ships as its own release line and rollout surface
+- the release repo owns bundle assembly and CDN publication
+- the docs site consumes a checked-in OpenAPI snapshot instead of reaching into a live control plane
+
+## Practical implication for contributors
+
+<Callout type="info">
+  A product change often spans multiple repos. A new runtime behavior can require API
+  code, web UI adjustments, release metadata changes, installer/runtime updates, and
+  docs updates in parallel.
+</Callout>

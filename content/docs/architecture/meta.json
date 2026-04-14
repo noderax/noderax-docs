@@ -1,0 +1,14 @@
+{
+  "title": "Architecture",
+  "description": "Understand the repo map, service boundaries, realtime HA model, and release pipeline.",
+  "icon": "Boxes",
+  "pages": [
+    "monorepo-map",
+    "api-architecture",
+    "web-architecture",
+    "agent-architecture",
+    "installer-architecture",
+    "realtime-and-ha",
+    "development-and-release"
+  ]
+}

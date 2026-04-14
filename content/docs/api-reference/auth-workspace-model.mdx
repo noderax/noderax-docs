@@ -1,0 +1,85 @@
+---
+title: Auth And Workspace Model
+description: Understand how authentication, authorization, and workspace scoping shape almost every API request in Noderax.
+---
+
+# Auth And Workspace Model
+
+Most operational endpoints require JWT bearer authentication and are guarded by
+workspace-aware authorization decisions.
+
+## Authentication
+
+Noderax uses bearer token authentication for protected API surfaces. Swagger and
+the generated OpenAPI model treat this as the main authorization mechanism.
+
+<Tabs items={["Browser/operator model", "API client model", "Setup/public exceptions"]}>
+  <Tab value="Browser/operator model">
+    The browser usually authenticates through the web app session flow. The Next.js
+    app holds the user session and proxies many operator-facing API requests through
+    internal route handlers instead of sending browser requests directly to the API.
+  </Tab>
+  <Tab value="API client model">
+    Direct API consumers use bearer authentication for protected endpoints. This is
+    the primary model represented in the generated OpenAPI reference.
+  </Tab>
+  <Tab value="Setup/public exceptions">
+    Before the platform is fully installed, setup and selected health routes must be
+    callable without the usual installed-runtime operator session model.
+  </Tab>
+</Tabs>
+
+## Workspace scoping
+
+Workspace context matters because nodes, events, metrics, tasks, packages,
+notifications, and most realtime events are scoped to a workspace.
+
+<Callout type="info">
+  Most “missing data” bugs are not transport bugs. They are workspace-scope
+  mismatches: wrong workspace slug, missing membership, or a request/event bound to
+  a different workspace than the operator expects.
+</Callout>
+
+## Access layers
+
+<Accordions type="single">
+  <Accordion title="Platform admin">
+    Platform admins can operate platform-wide settings and installer-managed surfaces
+    such as diagnostics and control-plane updates. This is not the same as being an
+    owner inside a single workspace.
+  </Accordion>
+  <Accordion title="Workspace membership">
+    A user’s workspace role determines which nodes, tasks, events, and operational
+    surfaces are visible or mutable in that workspace.
+  </Accordion>
+  <Accordion title="Team ownership">
+    Teams provide an organizational layer inside a workspace and influence how node
+    ownership, filtering, and day-to-day operational responsibility are represented.
+  </Accordion>
+</Accordions>
+
+## Public or setup-oriented exceptions
+
+Some routes intentionally sit outside the usual installed-runtime auth flow,
+including:
+
+- setup validation and setup install routes
+- selected health routes
+- certain public auth flows
+
+## Practical API implications
+
+<Cards>
+  <Card
+    title="HTTP routes"
+    description="Expect authenticated `/api/v1` routes for most installed-runtime operator actions, with selected health routes intentionally left outside the prefix."
+  />
+  <Card
+    title="Realtime"
+    description="Realtime delivery is still workspace-scoped even after the websocket is authenticated. A connected socket must join the correct rooms to receive useful events."
+  />
+  <Card
+    title="Node-generated commands"
+    description="Generated install commands and other operator-facing artifacts must use an externally reachable API origin, not an internal container hostname."
+  />
+</Cards>

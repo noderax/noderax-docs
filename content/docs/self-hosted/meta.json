@@ -1,0 +1,13 @@
+{
+  "title": "Self-Hosted",
+  "description": "Install the platform bundle, complete setup, operate the HA runtime, and troubleshoot the installer-managed control plane.",
+  "icon": "Server",
+  "pages": [
+    "fresh-install",
+    "first-run-setup",
+    "runtime-model",
+    "tls-and-domains",
+    "control-plane-updates",
+    "troubleshooting"
+  ]
+}

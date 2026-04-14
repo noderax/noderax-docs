@@ -1,0 +1,70 @@
+---
+title: First-Run Setup Flow
+description: Understand what happens in /setup, what the setup API validates, and what changes when the control plane is promoted into the installed runtime.
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+# First-Run Setup Flow
+
+After the installer finishes, the control plane is not yet in its steady-state
+runtime. The platform first serves a guided setup surface at `/setup`.
+
+## Setup responsibilities
+
+The setup flow is responsible for:
+
+- validating database reachability
+- validating Redis reachability
+- validating SMTP configuration
+- writing persistent runtime config
+- storing install state
+- triggering runtime promotion into the installed HA stack
+
+## Setup stack components
+
+Before promotion, the setup stack contains:
+
+- `api-setup`
+- `web`
+- `nginx`
+- `postgres`
+- `redis`
+- `certbot` when bundled TLS is enabled
+
+The database is intentionally not treated like an installed runtime dependency
+until setup has finished and the control plane has been promoted.
+
+## Operator flow inside `/setup`
+
+<Steps>
+  <Step>
+    Review or override runtime presets such as public API origin and bundled
+    PostgreSQL/Redis defaults.
+  </Step>
+  <Step>
+    Validate database, Redis, and optionally SMTP connectivity from the setup UI.
+  </Step>
+  <Step>
+    Submit final install inputs so the API can write persistent runtime state.
+  </Step>
+  <Step>
+    Wait for host-side promotion into the installed runtime and verify that the web
+    surface moves away from `/setup` toward the authenticated dashboard.
+  </Step>
+</Steps>
+
+## What promotion changes
+
+Promotion replaces the setup-only API role with the installed runtime:
+
+- `api-setup` is removed
+- `api-a` and `api-b` are started
+- `web`, `nginx`, `postgres`, `redis`, and `certbot` continue in the installed model
+- route probes must validate both API and web routing, not just container health
+
+<Callout type="warning">
+  Setup health and installed runtime health are different. During setup it is
+  normal for database-backed installed-runtime checks to show
+  `not_initialized`.
+</Callout>

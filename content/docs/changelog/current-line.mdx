@@ -1,0 +1,32 @@
+---
+title: Current 1.0.0 Line
+description: Understand what the current control-plane line means and why released builds inside that line are still distinct.
+---
+
+# Current `1.0.0` Line
+
+The current self-hosted control plane remains on the `1.0.0` line.
+
+That does **not** mean every published bundle is the same build. Control-plane
+builds are distinguished by `releaseId`.
+
+## Why this matters
+
+- self-update availability cannot rely on semantic version bumps alone
+- the dashboard must show current versus latest control-plane release identity
+- operators need changelog context even when the semantic version string is unchanged
+
+<Cards>
+  <Card
+    title="Installer-managed self-update"
+    description="Latest-only download/apply flow with prepared state and host-side orchestration."
+  />
+  <Card
+    title="Split Updates Center"
+    description="Separate control-plane and agent tabs so operators know which runtime they are changing."
+  />
+  <Card
+    title="HA-safe realtime"
+    description="Recent builds in this line hardened workspace fanout, Redis bridging, and immediate event emission."
+  />
+</Cards>

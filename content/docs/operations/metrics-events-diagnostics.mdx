@@ -1,0 +1,82 @@
+---
+title: Metrics, Events, Diagnostics, And Notifications
+description: Use the operational observability surfaces and understand how live metric updates and workspace-scoped events move through the system.
+---
+
+# Metrics, Events, Diagnostics, And Notifications
+
+Noderax exposes several observability surfaces.
+
+<Tabs items={["Metrics", "Events", "Diagnostics", "Notifications"]}>
+  <Tab value="Metrics">
+    Metrics are ingested from the agent and exposed through both HTTP queries and
+    realtime updates patched into the active web query cache.
+  </Tab>
+  <Tab value="Events">
+    Events capture workspace-scoped operational activity such as node state,
+    task execution, install progress, and diagnostics signals.
+  </Tab>
+  <Tab value="Diagnostics">
+    Diagnostics views are API-backed operational surfaces used to inspect task
+    flow, rollout behavior, update health, and runtime anomalies.
+  </Tab>
+  <Tab value="Notifications">
+    Notifications determine where operator-visible signals go, including mail and
+    chat integrations configured by the workspace or platform admin.
+  </Tab>
+</Tabs>
+
+## Metrics
+
+Metrics are ingested from the agent and made available through both the HTTP API
+and realtime updates to the web UI.
+
+Recent HA fixes matter here:
+
+- metric list endpoints are distinct from Prometheus-style export paths
+- workspace-level realtime fanout covers live metric events
+- the web app patches its metrics query cache from websocket events
+
+## Events
+
+Operational events capture node and task activity, status changes, and other
+workspace-scoped activity. In HA mode those events must survive cross-instance
+delivery, not just same-process emission.
+
+## Diagnostics
+
+Diagnostics pages are used to investigate execution state, update flows, and
+runtime behavior. They are API-backed and usually workspace-aware.
+
+## Notifications
+
+Notification delivery settings determine where operator signals go, including
+mail and chat integrations.
+
+<Callout type="info">
+  A healthy websocket handshake alone is not enough. Live metrics only feel
+  correct when the API emits workspace-scoped events immediately and the web app
+  consumes them into the active query cache.
+</Callout>
+
+## What “live” depends on in HA mode
+
+<Accordions type="single">
+  <Accordion title="The socket must connect to a healthy API instance">
+    In installed mode the websocket may terminate on either `api-a` or `api-b`.
+    nginx must proxy websocket traffic correctly and the API instance must accept
+    the authenticated session.
+  </Accordion>
+  <Accordion title="The socket must join the correct workspace rooms">
+    Delivery is room-based. The connection must land in the workspace rooms that
+    correspond to the current operator context, not only node-specific rooms.
+  </Accordion>
+  <Accordion title="Cross-instance pubsub must bridge events">
+    When an event is emitted on one API instance and the websocket is attached to
+    another, Redis pubsub bridging must forward that event to the connected node.
+  </Accordion>
+  <Accordion title="The web app must consume the live event">
+    A valid websocket alone is insufficient. The web app must merge the event into
+    the active query cache or component state that drives the operator surface.
+  </Accordion>
+</Accordions>

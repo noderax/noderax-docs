@@ -1,0 +1,72 @@
+---
+title: API Overview
+description: Understand how the Noderax API is organized before drilling into the generated endpoint reference tree.
+---
+
+# API Overview
+
+The Noderax API is a NestJS control-plane API exposed under `/api/v1` for most
+application routes, with selected health routes intentionally exposed without
+the prefix.
+
+## Documentation model
+
+This section combines:
+
+- hand-authored operational guides
+- generated endpoint reference pages derived from a checked-in OpenAPI schema snapshot
+
+## Why the schema is checked in
+
+The docs site is a separate repo and should not depend on a live production
+Swagger endpoint. Instead:
+
+- `noderax-api` exports a deterministic `openapi.json`
+- `noderax-docs` keeps a local schema snapshot under `openapi/openapi.json`
+- the generated endpoint tree is produced from that local file
+
+<Callout type="info">
+  v1 intentionally avoids a live authenticated playground or cookie-forwarding
+  proxy. The generated reference is read-only by design.
+</Callout>
+
+## Read the reference by concern
+
+<Cards>
+  <Card
+    title="Auth and workspace model"
+    href="/docs/api-reference/auth-workspace-model"
+    description="See how sessions, workspace scoping, and membership boundaries shape every operator-facing API call."
+  />
+  <Card
+    title="Realtime model"
+    href="/docs/api-reference/realtime-model"
+    description="Understand websocket transport, room membership, and the event contract behind live UI behavior."
+  />
+  <Card
+    title="Update flows"
+    href="/docs/api-reference/update-flows"
+    description="Compare agent rollouts with installer-managed control-plane download/apply semantics."
+  />
+</Cards>
+
+## Endpoint families
+
+<Tabs items={["Public/setup", "Workspace operations", "Realtime and terminals", "Updates"]}>
+  <Tab value="Public/setup">
+    Covers login-adjacent flows, setup bootstrap, health routes, and other
+    endpoints that must exist before the installed runtime is fully promoted.
+  </Tab>
+  <Tab value="Workspace operations">
+    Covers users, teams, workspaces, nodes, metrics, events, tasks, packages,
+    diagnostics, and audit activity.
+  </Tab>
+  <Tab value="Realtime and terminals">
+    Covers the websocket contract, event model, and terminal-specific APIs used
+    by the operator interface.
+  </Tab>
+  <Tab value="Updates">
+    Covers both agent-update rollout endpoints and installer-managed
+    control-plane update summary/download/apply endpoints.
+  </Tab>
+</Tabs>

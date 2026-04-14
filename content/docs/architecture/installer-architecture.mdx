@@ -1,0 +1,79 @@
+---
+title: Platform Bundle And Installer Architecture
+description: See how the platform release repo assembles the bundle and how the installer, supervisor, and release metadata fit together.
+---
+
+# Platform Bundle And Installer Architecture
+
+The platform release repo owns the self-hosted packaging layer.
+
+## Bundle contents
+
+The bundle includes:
+
+- saved API and web images
+- compose files for setup and installed runtime variants
+- nginx configs for HTTP, TLS, and external TLS scenarios
+- installer and status helper scripts
+- release manifest and checksums
+
+<Files>
+  <Folder name="platform-bundle" defaultOpen>
+    <Folder name="images" defaultOpen>
+      <File name="noderax-api.tar" />
+      <File name="noderax-web.tar" />
+      <File name="nginx/postgres/redis/certbot images" />
+    </Folder>
+    <Folder name="compose" defaultOpen>
+      <File name="setup.yml" />
+      <File name="setup.tls.yml" />
+      <File name="ha.yml" />
+      <File name="ha.tls.yml" />
+    </Folder>
+    <Folder name="deploy" defaultOpen>
+      <File name="platform/install.sh" />
+      <File name="platform/supervisor.sh" />
+      <File name="platform/control-plane-update.sh" />
+      <File name="nginx/*.conf" />
+    </Folder>
+    <File name="release-manifest.json" />
+    <File name="SHA256SUMS" />
+  </Folder>
+</Files>
+
+## Host-side orchestration
+
+Not all control-plane behavior lives inside containers. Host-side scripts own:
+
+- initial install
+- runtime promotion
+- control-plane update request processing
+- cert renewal timer installation
+- current bundle symlink management
+
+## Release metadata
+
+The published release manifest includes `platformVersion`, `releaseId`,
+`releasedAt`, and bundle integrity data. `releaseId` is the operationally
+important identity for self-update.
+
+## Control-plane self-update path
+
+<Steps>
+  <Step>
+    The API writes a host-side update request when a platform admin clicks
+    `Download latest update` or `Apply prepared update`.
+  </Step>
+  <Step>
+    The supervisor reads that request and invokes the control-plane update
+    helper on the host.
+  </Step>
+  <Step>
+    Download prepares a new extracted release under
+    `/opt/noderax-platform/releases/<releaseId>`.
+  </Step>
+  <Step>
+    Apply switches the `current` symlink, recreates services, verifies health,
+    and rolls back if the new runtime fails verification.
+  </Step>
+</Steps>

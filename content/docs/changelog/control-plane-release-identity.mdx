@@ -1,0 +1,50 @@
+---
+title: releaseId For Control-Plane Builds
+description: See how releaseId, bundle checksums, and releasedAt timestamps drive the self-update model.
+---
+
+# `releaseId` For Control-Plane Builds
+
+Control-plane releases publish the following identity layer:
+
+- `platformVersion`
+- `releaseId`
+- `releasedAt`
+- bundle checksum information
+
+## Update rule
+
+The control plane should consider a self-update available when:
+
+- `latest.releaseId !== current.releaseId`
+
+even if:
+
+- `latest.platformVersion === current.platformVersion`
+
+This is the core rule that makes installer-managed self-update reliable within a
+stable product line.
+
+<Callout type="info">
+  The semantic line answers “what product line am I on?” The `releaseId` answers
+  “which exact control-plane build is installed right now?”
+</Callout>
+
+## Why the model exists
+
+<Accordions type="single">
+  <Accordion title="Stable product line, multiple builds">
+    The platform can ship many operationally distinct builds while staying on
+    `1.0.0`. Without `releaseId`, the dashboard would not be able to detect or
+    explain meaningful control-plane updates.
+  </Accordion>
+  <Accordion title="Prepared state needs concrete identity">
+    The self-update flow stages a specific bundle under a specific extracted release
+    root. That prepared state must point to a concrete build, not only to a broad
+    semantic version label.
+  </Accordion>
+  <Accordion title="Rollback reporting also needs identity">
+    If an apply fails and the runtime rolls back, operators need to know exactly
+    which build failed and which previous build was restored.
+  </Accordion>
+</Accordions>

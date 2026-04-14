@@ -10,6 +10,9 @@
 
 # next.js
 /.next/
+/.open-next/
+/.wrangler/
+/.source/
 /out/
 
 # production

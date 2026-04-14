@@ -1,0 +1,70 @@
+---
+title: Local Development And Release Flow
+description: Understand how local development, schema export, platform bundle assembly, and CDN publication connect together.
+---
+
+# Local Development And Release Flow
+
+## Development
+
+The main repos are developed independently, then integrated through release
+metadata.
+
+<Steps>
+  <Step>
+    API, web, agent, platform-release, marketing, and docs repos evolve
+    independently in local development.
+  </Step>
+  <Step>
+    Shared product behavior is reconciled through explicit refs, generated
+    artifacts, and release metadata rather than a single monorepo package graph.
+  </Step>
+  <Step>
+    Release repos then consume those outputs into versioned artifacts and CDN
+    manifests.
+  </Step>
+</Steps>
+
+## OpenAPI docs flow
+
+- `noderax-api` exports a deterministic schema snapshot
+- `noderax-docs` syncs that snapshot locally
+- Fumadocs renders generated endpoint pages from the checked-in schema
+
+<CodeBlock>
+```bash
+cd noderax-api
+pnpm openapi:export
+
+cd ../noderax-docs
+pnpm sync:openapi
+```
+</CodeBlock>
+
+## Control-plane release flow
+
+- `noderax-platform-release` reads `apiRef` and `webRef`
+- it builds the platform bundle
+- it publishes bundle artifacts and manifests to the CDN
+- installer-managed deployments pull from the CDN latest manifest
+
+## Release surfaces by repo
+
+<Cards>
+  <Card
+    title="API + web"
+    description="Consumed by the platform bundle through explicit `apiRef` and `webRef` release metadata."
+  />
+  <Card
+    title="Agent"
+    description="Released on its own line and surfaced to operators through fleet rollout APIs and the dashboard."
+  />
+  <Card
+    title="Docs"
+    description="Consumes a checked-in OpenAPI snapshot and deploys as its own Cloudflare-hosted public site."
+  />
+</Cards>
+
+## Agent release flow
+
+The agent line is separate and consumed through rollout APIs and UI surfaces.

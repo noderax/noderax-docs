@@ -1,0 +1,105 @@
+---
+title: Noderax Documentation
+description: Read the current documentation tree for self-hosted install, operations, API reference, architecture, and release notes.
+---
+
+# Noderax Documentation
+
+Noderax is a workspace-aware infrastructure control plane composed of a Next.js
+operator surface, a NestJS orchestration API, a Go agent runtime, and an
+installer-managed release layer for self-hosted control planes.
+
+This site is the canonical long-form documentation set for:
+
+- operators running nodes and tasks
+- platform admins managing installer-managed deployments
+- developers integrating with the API or contributing to the repos
+
+<Cards>
+  <Card
+    title="Start Here"
+    href="/docs/start-here/overview"
+    description="Learn the core nouns, repo boundaries, and the shortest path for each role."
+  />
+  <Card
+    title="Self-Hosted"
+    href="/docs/self-hosted/fresh-install"
+    description="Install the platform, finish `/setup`, understand TLS, runtime promotion, and control-plane updates."
+  />
+  <Card
+    title="Operations"
+    href="/docs/operations/add-node-and-bootstrap"
+    description="Add nodes, verify metrics and events, open terminals, and operate the split Updates Center."
+  />
+  <Card
+    title="API Reference"
+    href="/docs/api-reference/overview"
+    description="Read the auth and realtime model, then drill into generated endpoint pages from the local OpenAPI snapshot."
+  />
+</Cards>
+
+## Read this docs tree by goal
+
+- **Start Here**: learn the core nouns, product surfaces, and fastest path for each role.
+- **Self-Hosted**: install the platform, finish `/setup`, understand HA runtime promotion, and operate TLS and control-plane updates.
+- **Operations**: add nodes, watch metrics, work with terminals, root access, tasks, notifications, and the split updates center.
+- **API Reference**: read the operational API guides, then drill into generated endpoint reference pages from the checked-in OpenAPI snapshot.
+- **Architecture**: understand how the web app, API, agent, and platform bundle fit together.
+- **Changelog**: track the current `1.0.0` line and how `releaseId` differentiates control-plane builds.
+
+<Callout type="info">
+  The platform line stays on `1.0.0`. Control-plane update detection is driven by
+  immutable `releaseId`, not by a changing semantic version string.
+</Callout>
+
+## Read by persona
+
+<Tabs items={["Operator", "Platform admin", "Developer"]}>
+  <Tab value="Operator">
+    Start with [Add node and bootstrap](/docs/operations/add-node-and-bootstrap),
+    then move to
+    [Metrics, events, diagnostics, and notifications](/docs/operations/metrics-events-diagnostics)
+    and [Terminals](/docs/operations/terminals).
+  </Tab>
+  <Tab value="Platform admin">
+    Start with [Fresh install](/docs/self-hosted/fresh-install), then
+    [First-run setup](/docs/self-hosted/first-run-setup),
+    [Runtime model](/docs/self-hosted/runtime-model), and
+    [Control-plane updates](/docs/self-hosted/control-plane-updates).
+  </Tab>
+  <Tab value="Developer">
+    Start with [API overview](/docs/api-reference/overview),
+    [Realtime model](/docs/api-reference/realtime-model), and
+    [Monorepo map](/docs/architecture/monorepo-map).
+  </Tab>
+</Tabs>
+
+## Core entry points
+
+- Public docs: `https://docs.noderax.net`
+- Self-hosted install: `curl -fsSL https://cdn.noderax.net/noderax-platform/install.sh | sudo bash`
+- Setup UI: `https://your-domain/setup`
+- Runtime dashboard: `https://your-domain/login`
+
+## Source of truth
+
+The docs on this site are authored from the current product behavior. Repo
+READMEs stay useful as quick references, but they are no longer the primary
+public documentation surface after the docs site launches.
+
+## Control-plane shape at a glance
+
+<Files>
+  <Folder name="Operator surface" defaultOpen>
+    <File name="Dashboard, diagnostics, metrics, terminals, updates center" />
+  </Folder>
+  <Folder name="API" defaultOpen>
+    <File name="Auth, orchestration, realtime, rollout coordination, control-plane update API" />
+  </Folder>
+  <Folder name="Agent" defaultOpen>
+    <File name="Metrics ingest, heartbeat, task execution, terminal bridge, node bootstrap" />
+  </Folder>
+  <Folder name="Platform bundle" defaultOpen>
+    <File name="Installer, compose variants, nginx, certbot, supervisor, release metadata" />
+  </Folder>
+</Files>

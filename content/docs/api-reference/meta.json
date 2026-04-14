@@ -1,0 +1,6 @@
+{
+  "title": "API Reference",
+  "description": "Read the API model and generated endpoint reference pages from the checked-in schema snapshot.",
+  "icon": "Braces",
+  "pages": ["overview", "auth-workspace-model", "realtime-model", "update-flows"]
+}

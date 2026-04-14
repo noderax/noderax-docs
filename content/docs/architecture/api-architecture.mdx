@@ -1,0 +1,74 @@
+---
+title: API Architecture
+description: Review the NestJS API structure, module boundaries, runtime modes, and the role of health and realtime surfaces.
+---
+
+# API Architecture
+
+The API is the orchestration core of Noderax.
+
+## Responsibilities
+
+- auth and sessions
+- workspaces, memberships, and teams
+- nodes, metrics, events, diagnostics, packages, tasks, and notifications
+- terminal orchestration
+- agent update rollouts
+- control-plane update summary and request APIs
+- realtime event distribution
+
+<Files>
+  <Folder name="src/main.ts" defaultOpen>
+    <File name="boot path and module selection" />
+  </Folder>
+  <Folder name="src/app.module.ts" defaultOpen>
+    <File name="installed-runtime Nest root module" />
+  </Folder>
+  <Folder name="src/setup-app.module.ts" defaultOpen>
+    <File name="setup-runtime Nest root module" />
+  </Folder>
+  <Folder name="src/modules" defaultOpen>
+    <File name="auth, users, workspaces, nodes, metrics, events, tasks, terminal, updates, diagnostics, notifications" />
+  </Folder>
+</Files>
+
+## Runtime modes
+
+The API has two product modes:
+
+- **setup mode** with `SetupAppModule`
+- **installed mode** with `AppModule`
+
+The bundle chooses the correct root module during boot based on installer state
+and runtime role.
+
+## Architectural boundaries
+
+<Tabs items={["Setup API", "Installed API", "Host-assisted behavior"]}>
+  <Tab value="Setup API">
+    The setup API exists only to validate bootstrap inputs, write install state, and
+    trigger promotion into the installed runtime.
+  </Tab>
+  <Tab value="Installed API">
+    The installed API owns normal operator functionality: auth, nodes, metrics,
+    events, diagnostics, terminals, notifications, rollouts, and control-plane
+    update orchestration.
+  </Tab>
+  <Tab value="Host-assisted behavior">
+    Some state transitions originate through the API but complete on the host, such
+    as runtime promotion and control-plane bundle apply. The API coordinates but does
+    not directly mutate the Docker runtime from inside the container.
+  </Tab>
+</Tabs>
+
+## Health model
+
+Health routes exist both for operational dependency checks and for host-side
+promotion/update logic. Correct behavior depends on keeping setup and installed
+runtime probes distinct.
+
+<Callout type="warning">
+  Setup health and installed-runtime health are intentionally different contracts.
+  Treating them as interchangeable causes false positives during install and false
+  negatives during promotion.
+</Callout>

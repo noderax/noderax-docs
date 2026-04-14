@@ -1,0 +1,108 @@
+---
+title: Fresh Install
+description: Run the installer-managed bundle from a clean host and understand what the install command provisions for you.
+---
+
+# Fresh Install
+
+The supported self-hosted entry point is:
+
+```bash
+curl -fsSL https://cdn.noderax.net/noderax-platform/install.sh | sudo bash
+```
+
+<Callout type="info">
+  The supported path is the installer-managed bundle. The docs do not treat the
+  compose files as a standalone product surface detached from the host-side
+  installer and supervisor flow.
+</Callout>
+
+## What the installer does
+
+The installer:
+
+- downloads the latest published bundle from the CDN
+- verifies checksums
+- extracts the bundle under `/opt/noderax-platform`
+- writes runtime config under `/etc/noderax-platform`
+- uses `/var/lib/noderax-platform` as persistent state root
+- starts the setup stack with bundled nginx, PostgreSQL, Redis, API, web, and certbot
+
+<Files>
+  <Folder name="/opt/noderax-platform" defaultOpen>
+    <File name="current/ -> active extracted bundle" />
+    <File name="releases/<releaseId>/ -> downloaded bundle versions" />
+  </Folder>
+  <Folder name="/etc/noderax-platform" defaultOpen>
+    <File name=".env.production -> installer-managed runtime env" />
+  </Folder>
+  <Folder name="/var/lib/noderax-platform" defaultOpen>
+    <File name="postgres/" />
+    <File name="redis/" />
+    <File name="acme-webroot/" />
+    <File name="state/" />
+  </Folder>
+</Files>
+
+## Host prerequisites
+
+The current installer targets a clean Linux VM or server with:
+
+- outbound internet access for bundle download, package install, and optional ACME issuance
+- root or `sudo` access
+- public reachability on ports `80` and `443` if you want automatic HTTPS
+
+The installer handles its own common toolchain requirements such as Docker,
+Docker Compose, `curl`, `jq`, `openssl`, `tar`, and `zstd`.
+
+## Install path variants
+
+<Tabs items={["Domain + automatic HTTPS", "IP or lab install"]}>
+  <Tab value="Domain + automatic HTTPS">
+    Use a public origin such as `https://dash.example.com`. The installer will
+    preflight ACME routing on port `80`, request the certificate, switch nginx
+    into TLS mode, and install the renewal timer.
+  </Tab>
+  <Tab value="IP or lab install">
+    Use an `http://` origin when you do not have a DNS name yet. The installer
+    treats IP-based installs as non-ACME flows and keeps the setup surface
+    reachable without forcing a broken TLS path.
+  </Tab>
+</Tabs>
+
+## First successful install
+
+<Steps>
+  <Step>
+    Provide a public origin such as `https://dash.example.com`.
+  </Step>
+  <Step>
+    If the origin is a domain, let the installer provision automatic HTTPS.
+  </Step>
+  <Step>
+    Wait for the setup stack to come up and for `/setup` to respond.
+  </Step>
+  <Step>
+    Continue in the setup UI to finish bootstrap and runtime promotion.
+  </Step>
+</Steps>
+
+## After the installer exits successfully
+
+<Cards>
+  <Card
+    title="Open /setup"
+    href="/docs/self-hosted/first-run-setup"
+    description="Finish the first-run setup flow and write the final installed state."
+  />
+  <Card
+    title="Understand runtime promotion"
+    href="/docs/self-hosted/runtime-model"
+    description="See how `api-setup` is replaced by `api-a`, `api-b`, `web`, and nginx routing in installed mode."
+  />
+  <Card
+    title="Troubleshoot the host"
+    href="/docs/self-hosted/troubleshooting"
+    description="Use the status helper, route probes, and service state to diagnose install failures."
+  />
+</Cards>

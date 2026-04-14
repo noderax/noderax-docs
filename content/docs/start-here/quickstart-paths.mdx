@@ -1,0 +1,75 @@
+---
+title: Quickstart Paths
+description: Pick the shortest useful path based on whether you are operating the platform, administering the control plane, or integrating as a developer.
+---
+
+import { Steps, Step } from "fumadocs-ui/components/steps";
+
+# Quickstart Paths
+
+Choose the path that matches what you need to do right now.
+
+## Operator path
+
+Use this path if you need to add nodes, inspect metrics, open terminals, or work
+with tasks and packages.
+
+<Steps>
+  <Step>
+    Sign into the control plane and join the correct workspace.
+  </Step>
+  <Step>
+    Add a node from the dashboard and collect the generated install command.
+  </Step>
+  <Step>
+    Run the node install command on the target machine and watch the install
+    progress update in realtime.
+  </Step>
+  <Step>
+    After enrollment completes, verify metrics, heartbeat, diagnostics, and
+    terminal access from the node detail views.
+  </Step>
+</Steps>
+
+## Platform admin path
+
+Use this path if you own the control plane itself.
+
+<Steps>
+  <Step>
+    Install the platform bundle with the public install command.
+  </Step>
+  <Step>
+    Open `/setup` and finish the bootstrap flow for database, Redis, mail, and
+    admin credentials.
+  </Step>
+  <Step>
+    Confirm runtime promotion and verify `api-a`, `api-b`, `web`, and `nginx`.
+  </Step>
+  <Step>
+    Use the `Control plane` tab in the Updates Center to download and apply
+    newer installer-managed releases when they become available.
+  </Step>
+</Steps>
+
+## Developer path
+
+Use this path if you are integrating with the API or contributing to the code.
+
+<Steps>
+  <Step>
+    Read the architecture pages for repo layout, API/web/agent boundaries, and
+    the release pipeline.
+  </Step>
+  <Step>
+    Read the API overview pages for auth, workspace scoping, realtime, and
+    update flows.
+  </Step>
+  <Step>
+    Browse the generated endpoint reference pages under `API Reference`.
+  </Step>
+  <Step>
+    If you need a current schema snapshot, run `pnpm sync:openapi` inside
+    `noderax-docs`.
+  </Step>
+</Steps>

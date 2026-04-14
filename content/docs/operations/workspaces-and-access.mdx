@@ -1,0 +1,57 @@
+---
+title: Users, Memberships, Teams, And Roles
+description: Understand how the control plane scopes operational access and why workspace-aware behavior matters throughout the product.
+---
+
+# Users, Memberships, Teams, And Roles
+
+Most operational activity in Noderax is workspace-scoped.
+
+## Users
+
+Users authenticate into the control plane and can belong to one or more
+workspaces.
+
+## Memberships
+
+A membership ties a user to a workspace with a role. That role determines what
+the user can see and do inside that workspace.
+
+## Teams
+
+Teams provide a structured grouping layer inside a workspace. They are commonly
+used to route node ownership, operational views, and policy application.
+
+<Tabs items={["Users", "Workspace memberships", "Teams"]}>
+  <Tab value="Users">
+    Users are global identities. They sign in once and may carry different roles in
+    different workspaces.
+  </Tab>
+  <Tab value="Workspace memberships">
+    Membership is where day-to-day authorization becomes concrete. It decides who
+    can view, operate, or administer the resources inside a workspace.
+  </Tab>
+  <Tab value="Teams">
+    Teams are not a replacement for workspace boundaries. They are an internal
+    grouping tool for ownership and operational organization.
+  </Tab>
+</Tabs>
+
+## Why this matters
+
+The following product areas are all workspace-aware:
+
+- nodes and enrollment
+- metrics and events
+- notifications
+- tasks and package actions
+- realtime subscriptions
+- agent update targeting
+
+If a page or websocket event looks missing, always verify you are in the
+expected workspace context first.
+
+<Callout type="info">
+  Workspace context affects both HTTP reads and websocket delivery. A correct login
+  session with the wrong workspace still produces apparently missing data.
+</Callout>

@@ -1,0 +1,91 @@
+---
+title: Add Node And Bootstrap Flow
+description: Add a node from the dashboard, run the generated install command, and understand how install progress and final enrollment are reported.
+---
+
+# Add Node And Bootstrap Flow
+
+Node enrollment is a two-sided workflow between the control plane and the agent
+install command.
+
+## Control-plane side
+
+When you add a node in the dashboard, the control plane creates:
+
+- an enrollment context
+- a node install record
+- an install command tailored to the current public API URL
+
+The install command must use an externally reachable API URL, not an internal
+container hostname.
+
+<Callout type="warning">
+  If the generated install command contains an internal hostname such as
+  `http://nginx`, the node cannot enroll from outside the control-plane host.
+  Current builds prefer the public API URL derived from the active public origin.
+</Callout>
+
+## Node-side execution
+
+Running the generated install command on the target machine installs the agent,
+registers it, and reports progress back to the control plane.
+
+## Progress model
+
+Recent fixes hardened the realtime path for node-install progress:
+
+- workspace room fanout exists in HA mode
+- cross-instance Redis bridge forwards events
+- node install progress is emitted immediately instead of waiting behind a slow outbox path
+
+## Enrollment flow
+
+<Steps>
+  <Step>
+    A platform user creates the node enrollment in the dashboard.
+  </Step>
+  <Step>
+    The API generates a node install command scoped to the active workspace and
+    public API URL.
+  </Step>
+  <Step>
+    The operator runs the command on the target machine.
+  </Step>
+  <Step>
+    The agent installs, authenticates, emits bootstrap progress, and completes
+    final registration.
+  </Step>
+</Steps>
+
+## What the operator should expect to see
+
+<Accordions type="single">
+  <Accordion title="Before the command runs">
+    The dashboard should show the pending enrollment and the generated install
+    command. No node heartbeat or live metrics exist yet.
+  </Accordion>
+  <Accordion title="While bootstrap is running">
+    The operator should see `node-install.updated` style progress, step changes,
+    and a transition from pending install to active enrollment.
+  </Accordion>
+  <Accordion title="After success">
+    The node appears in the workspace node list with heartbeat, metrics,
+    diagnostics surfaces, and terminal eligibility according to its root-access
+    profile and runtime state.
+  </Accordion>
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card
+    title="Metrics, events, diagnostics"
+    href="/docs/operations/metrics-events-diagnostics"
+    description="Verify the node after enrollment with live metrics and operational events."
+  />
+  <Card
+    title="Root access"
+    href="/docs/operations/root-access"
+    description="Understand how terminal and privileged operations are constrained after the node comes online."
+  />
+</Cards>

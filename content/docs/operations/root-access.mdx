@@ -1,0 +1,52 @@
+---
+title: Root Access Model And Composite Profiles
+description: Understand how Noderax models elevated access and how composite profiles simplify repeated operational choices.
+---
+
+# Root Access Model And Composite Profiles
+
+Root access in Noderax is an explicit operational policy surface.
+
+## Direct flags
+
+The system can model low-level root capability directly, but direct flags become
+hard to reason about at scale.
+
+## Composite profiles
+
+Composite profiles package root-access expectations into operator-facing choices.
+This keeps the dashboard and node policy flow easier to audit than a loose set
+of independent toggles.
+
+<Tabs items={["Profiles", "What they affect", "Why they exist"]}>
+  <Tab value="Profiles">
+    Operator-visible profiles include `off`, `operational`, `task`, `terminal`,
+    `operational_task`, `operational_terminal`, `task_terminal`, and `all`.
+  </Tab>
+  <Tab value="What they affect">
+    Root access influences terminal capabilities, package actions, diagnostics
+    actions, and any other node-side workflow that needs privilege.
+  </Tab>
+  <Tab value="Why they exist">
+    Composite profiles make privileged behavior legible. They let operators reason
+    about access intent without hand-assembling a matrix of low-level flags.
+  </Tab>
+</Tabs>
+
+## Why it matters
+
+Root access influences:
+
+- terminal capabilities
+- package actions
+- certain bootstrap and diagnostics flows
+- operator expectations when targeting nodes
+
+The recommended pattern is to use composite profiles where possible and reserve
+ad hoc overrides for deliberate exceptions.
+
+<Callout type="warning">
+  Root access is not merely cosmetic gating in the UI. The product treats it as an
+  operational policy that must reconcile across API intent, agent-applied state, and
+  surface-specific action checks.
+</Callout>
