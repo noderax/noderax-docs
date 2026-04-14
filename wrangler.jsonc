@@ -3,27 +3,24 @@
   "main": ".open-next/worker.js",
   "name": "noderax-docs",
   "compatibility_date": "2026-04-14",
-  "compatibility_flags": [
-    "nodejs_compat",
-    "global_fetch_strictly_public"
-  ],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "noderax-docs"
-    }
+      "service": "noderax-docs",
+    },
   ],
   "r2_buckets": [
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "noderax-docs-opennext-cache"
-    }
+      "bucket_name": "noderax-docs-opennext-cache",
+    },
   ],
   "images": {
-    "binding": "IMAGES"
-  }
+    "binding": "IMAGES",
+  },
 }

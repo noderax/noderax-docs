@@ -1,7 +1,7 @@
 # Noderax Docs
 
 Public documentation site for Noderax, built with Next.js, Fumadocs, and
-OpenNext Cloudflare.
+Vercel deployment.
 
 ## Scope
 
@@ -37,5 +37,8 @@ copies the exported schema into this repo.
 
 ## Deployment
 
-The project mirrors the Cloudflare/OpenNext deployment model used by the
-marketing site.
+Deploy on Vercel with the standard Next.js build command:
+
+```bash
+pnpm build
+```
