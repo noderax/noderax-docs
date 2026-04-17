@@ -1,5 +1,6 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 import { BookOpenText, Github, Rocket } from "lucide-react";
+import { SystemStatus } from "@/components/system-status";
 import { site } from "./site";
 
 export function baseOptions(): BaseLayoutProps {
@@ -11,6 +12,7 @@ export function baseOptions(): BaseLayoutProps {
           {site.name}
         </span>
       ),
+      children: <SystemStatus />,
     },
     links: [
       {
