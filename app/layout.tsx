@@ -38,7 +38,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="min-h-screen">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider
+          search={{
+            options: {
+              api: "/api/search",
+              type: "static",
+            },
+          }}
+        >
+          {children}
+        </RootProvider>
       </body>
     </html>
   );

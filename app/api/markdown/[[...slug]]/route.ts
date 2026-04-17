@@ -1,25 +1,5 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { NextResponse } from "next/server";
 import { source } from "@/lib/source";
-
-const routeFilePath = fileURLToPath(import.meta.url);
-const routeDir = path.dirname(routeFilePath);
-const docsRoot = path.resolve(routeDir, "../../../../content/docs");
-
-function stripFrontmatter(input: string): string {
-  if (!input.startsWith("---\n")) {
-    return input;
-  }
-
-  const end = input.indexOf("\n---\n", 4);
-  if (end === -1) {
-    return input;
-  }
-
-  return input.slice(end + 5).trimStart();
-}
 
 export async function GET(
   _request: Request,
@@ -52,9 +32,7 @@ export async function GET(
     });
   }
 
-  const absolutePath = path.join(docsRoot, page.path);
-  const raw = await readFile(absolutePath, "utf8");
-  const markdown = stripFrontmatter(raw);
+  const markdown = await page.data.getText("processed");
 
   return new NextResponse(markdown, {
     headers: {
