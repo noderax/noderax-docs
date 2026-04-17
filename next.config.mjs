@@ -11,6 +11,10 @@ const nextConfig = {
   turbopack: {
     root: appRoot,
   },
+  outputFileTracingIncludes: {
+    "/api/search": ["./openapi/openapi.json"],
+    "/api/markdown/\\[\\[\\.\\.\\.slug\\]\\]": ["./openapi/openapi.json"],
+  },
 };
 
 export default withMDX(nextConfig);
